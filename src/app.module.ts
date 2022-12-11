@@ -6,6 +6,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
 import { CommentModule } from './comment/comment.module';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -17,13 +18,14 @@ import { MailerModule } from '@nestjs-modules/mailer';
     CommentModule,
     MailerModule.forRoot({
       transport: {
-        host: '',
+        host: 'smtp.sendgrid.net',
         auth: {
-          user: '',
-          pass: '',
+          user: 'apikey',
+          pass: process.env.EMAIL_KEY,
         },
       },
     }),
+    EmailModule,
   ],
 })
 export class AppModule {}

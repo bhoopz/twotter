@@ -5,6 +5,7 @@ import * as argon from 'argon2';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { EmailService } from 'src/email/email.service';
 
 @Injectable()
 export class AuthService {
@@ -12,8 +13,9 @@ export class AuthService {
     private prisma: PrismaService,
     private jwt: JwtService,
     private config: ConfigService,
+    private emailService: EmailService,
   ) {}
-  async signup(dto: AuthDto) {
+  async signup(dto: AuthDto, header: string) {
     const hashPassword = await argon.hash(dto.password);
 
     try {
@@ -23,7 +25,14 @@ export class AuthService {
           hashPassword,
         },
       });
-      return this.generateToken(user.id, user.email);
+
+      const token = await this.generateToken(user.id, user.email);
+
+      return this.emailService.sendEmail(
+        user.email,
+        header,
+        token.access_token,
+      );
     } catch (err) {
       if (err instanceof PrismaClientKnownRequestError) {
         if (err.code === 'P2002') {
@@ -44,6 +53,8 @@ export class AuthService {
     const passwordMatch = argon.verify(user.hashPassword, dto.password);
 
     if (!passwordMatch) throw new ForbiddenException('Invalid input');
+    if (!user.confirmed)
+      throw new ForbiddenException('Please confirm your email');
 
     return this.generateToken(user.id, user.email);
   }
