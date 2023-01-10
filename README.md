@@ -45,29 +45,41 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
-## Test
+## About app
 
-```bash
-# unit tests
-$ npm run test
+Twotter is an api that has twitter-like functionality. 
+Technologies used:
+- Typescript
+- Nest.js
+- PostgreSQL
+- Docker
+- Prisma ORM
 
-# e2e tests
-$ npm run test:e2e
+## Endpoints
 
-# test coverage
-$ npm run test:cov
+```
+POST auth/signup { email, password } -201
+POST auth/signin { email, password } -200
+
+POST users/{:id}/follow - - add user to your watchlist
+DELETE users/{:id}/unfollow - - delete user from watchlist
+
+POST quotes { content } - - public entry
+GET quotes - - get your entries
+GET quotes/{:id} - - get quotes user with id
+GET quotes/dashboard - - get followers quotes
+PATCH quotes/{:id} {content} - - update your entry
+POST quotes/{:id}/like - - like quote with id
+DELETE quotes/{:id}/like - - unlike quote with id
+GET quotes/trendy - - get most popular quotes in 2 days (based on likes)
+GET quotes/newest - - get the newest quotes 
+DELETE quotes/{:id} - - delete quote
+
+POST quotes/:id/comment { content } - - comment quote with id
+PATHCH comments/{:id} {content} - - update your comment
+DELETE comments/{:id} - - delete quote
+
+Every route beyond authorization protected by JWT.
 ```
 
-## Support
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
